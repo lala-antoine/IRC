@@ -1,0 +1,4 @@
+flask>=2.0
+flasgger>=0.9
+requests>=2.25
+flask_sqlalchemy>=3.0
