@@ -23,7 +23,7 @@ Objet **WhoIS** :
 }
 ```
 
-Clé JWT : **on-ny-arrivera-jamais**
+Clé JWT : **on-ny-arrivera-jamais-enfin-peut-etre**
 ```json
 {
 "pseudo" : "string",
@@ -34,7 +34,9 @@ Clé JWT : **on-ny-arrivera-jamais**
 
 # Routes
 
-**Route GET**
+## GET
+
+**Route GET Generique**
 ```yaml
     Description
     ---
@@ -50,8 +52,7 @@ Clé JWT : **on-ny-arrivera-jamais**
       400:
         description: Description
 ```
-
-**Route POST**
+**Route POST Générique**
 ```yaml
     Description
     ---
@@ -70,4 +71,30 @@ Clé JWT : **on-ny-arrivera-jamais**
         description: Description
       400:
         description: Description
+```
+
+POST **/login**
+```yaml
+    Description
+    ---
+    parameters:
+      - name: login
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            pseudo:
+              type: string
+              example: "Roger"
+            password:
+              type: string
+              example: "CoinCoin"
+    responses:
+      200:
+        description: "Ok"
+      401:
+        description: "Mot de passe incorrect"
+      404:
+        description: "Utilisateur Inconnu"
 ```
