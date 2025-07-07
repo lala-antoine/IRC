@@ -34,7 +34,7 @@ Clé JWT : **on-ny-arrivera-jamais**
 
 # Routes
 
-**Route 1**
+**Route GET**
 ```yaml
     Description
     ---
@@ -49,4 +49,25 @@ Clé JWT : **on-ny-arrivera-jamais**
         description: Descriptioin
       400:
         description: Description
-    ```
+```
+
+**Route POST**
+```yaml
+    Description
+    ---
+    parameters:
+      - name: param_name
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            joke:
+              type: string
+              example: "exemple"
+    responses:
+      201:
+        description: Description
+      400:
+        description: Description
+```
