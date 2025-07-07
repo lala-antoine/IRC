@@ -53,5 +53,28 @@ def register():
         201,
     )
 
+
+@app.route("/whois/<pseudo>", methods=["GET"])
+def whois(pseudo):
+    utilisateur = Utilisateur.query.get(pseudo)
+    if not utilisateur:
+        return (
+            jsonify(error="Utilisateur inconnu"),
+            404
+        )
+
+    return (
+        jsonify(
+            {
+                "pseudo": utilisateur.pseudo,
+                "cannaux": ["TODO"], # TODO voir pour les cannaux
+                "statut": utilisateur.statut,
+                "derAct": utilisateur.derAct,
+                "roles": [r.nom for r in utilisateur.roles],
+            }
+        ),
+        200
+    )
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5001")))
