@@ -52,6 +52,9 @@ Clé JWT : **on-ny-arrivera-jamais-enfin-peut-etre**
       400:
         description: Description
 ```
+
+## POST
+
 **Route POST Générique**
 ```yaml
     Description
@@ -75,7 +78,7 @@ Clé JWT : **on-ny-arrivera-jamais-enfin-peut-etre**
 
 POST **/login**
 ```yaml
-    Description
+    Connecte l'utilisateur et renvoie un jeton JWT
     ---
     parameters:
       - name: login
@@ -90,6 +93,41 @@ POST **/login**
             password:
               type: string
               example: "CoinCoin"
+    responses:
+      200:
+        description: "Ok"
+      401:
+        description: "Mot de passe incorrect"
+      404:
+        description: "Utilisateur Inconnu"
+```
+
+POST **/register**
+```yaml
+    Crée un nouvel utilisateur
+    ---
+    parameters:
+      - name: login
+        in: body
+        required: 
+          - pseudo
+          - email
+          - password
+        schema:
+          type: object
+          properties:
+            pseudo:
+              type: string
+              example: "Roger"
+            email:
+              type: string
+              example: "CoinCoin@duckdns.org"
+            password:
+              type: string
+              example: "pa_en!plastik"
+            avatar:
+              type: string
+              example: "super_duper_hot_duck.png"
     responses:
       200:
         description: "Ok"
