@@ -12,7 +12,7 @@ class UserServiceTestCase(unittest.TestCase):
 
     def test_register(self):
         # Test d'inscription
-        response = self.client.post('/register', json={
+        response = self.client.post('/register', json = {
             'pseudo': 'roger',
             'email': 'roger@canaduck.com',
             'password': 'test123'

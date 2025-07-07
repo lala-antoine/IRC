@@ -16,9 +16,6 @@ curl -X POST http://localhost:5001/register \
   "password": "mdp_roger" }'
   ```
 
-
-
-
 ## Se connecter puis récupérer un token :
 
 ```
