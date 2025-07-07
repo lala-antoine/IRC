@@ -1,3 +1,5 @@
+Pour chaque commande, on a l'objectif derrière le # puis la commande curl avec les options à renseigner (-H et -d)
+
 # Créer un compte utilisateur : 
 
 curl -X POST http://localhost:5001/register \
