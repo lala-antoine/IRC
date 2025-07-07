@@ -57,12 +57,29 @@ def register():
 @app.route('/login', methods=['POST'])
 def login():
     
-    """Connecte un utilisateur.
-    Requête JSON attendue :
-    {
-        "pseudo": "string",
-        "password": "string",
-    }
+    """   
+    Description
+    ---
+    parameters:
+      - name: login
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            pseudo:
+              type: string
+              example: "Roger"
+            password:
+              type: string
+              example: "CoinCoin"
+    responses:
+      200:
+        description: "Ok"
+      401:
+        description: "Mot de passe incorrect"
+      404:
+        description: "Utilisateur Inconnu"
     """
     
     data = request.get_json()
@@ -80,7 +97,7 @@ def login():
     if not check_password_hash(user.password_hash, password):
         return jsonify({"error": "Mot de passe incorrect"}), 401
     
-    roles = User.query("roles").filter_by(pseudo=pseudo).first()
+    roles = User.query().filter_by(pseudo=pseudo).first().roles
     
     token = generate_jwt(user.pseudo, roles)
     
