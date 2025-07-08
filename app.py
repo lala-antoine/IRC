@@ -1,4 +1,5 @@
 from config import *
+from utils.jwt_utils import generate_jwt
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -89,16 +90,16 @@ def login():
     if not pseudo or not password:
         return jsonify({"error" : "pseudo ou password manquant"}), 400
 
-    user = User.query.filter_by(pseudo=pseudo).first()
+    user = Utilisateur.query.filter_by(pseudo=pseudo).first()
     
     if not user:
         return jsonify({"error" : "utilisateur inconnu"}), 404
     
-    if not check_password_hash(user.password_hash, password):
+    if not check_password_hash(user.password, password):
         return jsonify({"error": "Mot de passe incorrect"}), 401
     
-    roles = User.query().filter_by(pseudo=pseudo).first().roles
-    
+    roles = [r.nom for r in user.roles]
+
     token = generate_jwt(user.pseudo, roles)
     
     return jsonify({"token" : token}), 200

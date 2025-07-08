@@ -4,7 +4,7 @@ import time
 import sqlalchemy
 from flasgger import Swagger, swag_from
 from flask import Flask, request, jsonify
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from models import Utilisateur, Role, db
 
