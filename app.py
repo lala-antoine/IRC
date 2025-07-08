@@ -1,6 +1,23 @@
 from config import *
 from utils.jwt_utils import generate_jwt
 
+EXEMPT_ROUTES = ['/login', '/register', '/']
+
+@app.before_request
+def check_jwt_globally():
+    if request.path in EXEMPT_ROUTES:
+        return  # on laisse passer sans vérifier le JWT
+
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"error": "Token manquant"}), 401
+
+    token = auth_header.split(" ")[1]
+    payload = decode_jwt(token)
+
+    if "error" in payload:
+        return jsonify(payload), 401
+
 @app.route("/register", methods=["POST"])
 def register():
     """Crée un nouvel utilisateur.
@@ -76,7 +93,7 @@ def whois(pseudo):
         ),
         200
     )
-    
+
 @app.route('/login', methods=['POST'])
 def login():
     
