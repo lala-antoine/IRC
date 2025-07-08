@@ -146,6 +146,34 @@ def seen(pseudo):
     )
 
 
+SEUIL_2H = 7200
+
+def est_en_ligne(u: Utilisateur) -> bool:
+    """Retourne True si l'utilisateur a été actif il y a moins de 2 h."""
+    return time.time() - u.derAct <= SEUIL_2H
+
+
+@app.route("/ison", methods=["GET"])
+def ison():
+    raw = request.args.get("users")
+
+    if raw is None:
+        return jsonify(error="Paramètre 'users' requis"), 400
+
+    pseudos = [u.strip() for u in raw.split(",") if u.strip()]
+
+    utilisateurs = (
+        Utilisateur.query
+        .filter(Utilisateur.pseudo.in_(pseudos))
+        .all()
+    )
+
+    out = {}
+    for u in utilisateurs:
+        out[u.pseudo] = est_en_ligne(u)
+
+    return jsonify(out), 200
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5001")))
 
