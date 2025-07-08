@@ -44,6 +44,13 @@ Création de la branche Documentation, rédaction de ce document et bien d'autre
 
 ### Jour 2
 
-## 13h30 - 
+## 13h30 - 14h00
 
 **Julien déserte le groupe 🙏😔 et laisse le reste de l'équipe démunie face à la charge de travail croissante et la pression venant des autres groupes.**
+
+- Ajout de la méthode Seen
+- Progrès sur le JWT
+- Mise à jour de la documentation de Register
+- Mise à jour de la doc de login pour retourner un jwt
+- Ajout de la documentation de whois
+- Ajout de la documentation de seen

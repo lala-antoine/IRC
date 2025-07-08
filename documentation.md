@@ -53,6 +53,24 @@ Clé JWT : **on-ny-arrivera-jamais-enfin-peut-etre**
         description: Description
 ```
 
+**Route GET WhoIs**
+```yaml
+    Renvoie des informations publiques sur un utilisateur
+    ---
+    parameters:
+      - name: user_info
+        in: query
+        type: string
+        required: true
+        example: "QuackSparrow"
+    responses:
+      200:
+        description: "Ok"
+      404:
+        description: "Utilisateur inconnu"
+```
+
+
 ## POST
 
 **Route POST Générique**
@@ -71,9 +89,9 @@ Clé JWT : **on-ny-arrivera-jamais-enfin-peut-etre**
               example: "exemple"
     responses:
       201:
-        description: Description
+        description: "Description"
       400:
-        description: Description
+        description: "Description"
 ```
 
 POST **/login**
@@ -96,6 +114,14 @@ POST **/login**
     responses:
       200:
         description: "Ok"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
       401:
         description: "Mot de passe incorrect"
       404:
