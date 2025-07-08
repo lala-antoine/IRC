@@ -107,7 +107,7 @@ POST **/register**
     Crée un nouvel utilisateur
     ---
     parameters:
-      - name: login
+      - name: user_info
         in: body
         required: 
           - pseudo
@@ -129,10 +129,12 @@ POST **/register**
               type: string
               example: "super_duper_hot_duck.png"
     responses:
-      200:
+      201:
         description: "Ok"
-      401:
-        description: "Mot de passe incorrect"
+      400:
+        description: "Champs obligatoires manquants"
+      409:
+        description: "Pseudo ou email déjà utilisé"
       404:
         description: "Utilisateur Inconnu"
 ```
