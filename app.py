@@ -163,6 +163,24 @@ def seen(pseudo):
     )
 
 
+
+@app.route("/user/status", methods=["POST"])
+def change_status():
+    return
+
+@app.route("/user/avatar/<pseudo>", methods=["GET"])
+def get_avatar(pseudo):
+    utilisateur = Utilisateur.query.get(pseudo)
+
+    if not utilisateur:
+        return (
+            jsonify(error="Utilisateur inconnu"),
+            404
+        )
+
+    return jsonify({"avatar": utilisateur.avatar}), 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5001")))
 
