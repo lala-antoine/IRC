@@ -193,6 +193,25 @@ def change_password(pseudo):
 
     return jsonify({"message": "Mot de passe mis à jour avec succès"}) , 200
 
+
+@app.route("/user/<pseudo>", methods=["DELETE"])
+def supprimer_utilisateur(pseudo):
+
+    auth_header = request.headers.get('Authorization')
+    token = auth_header.split(" ")[1]
+    data = decode_jwt(token)
+
+    if pseudo != data["pseudo"]:
+        return jsonify(error="l'utilisateur connecté n'est pas le même que celui en argument"), 400
+    
+    user = Utilisateur.query.filter_by(pseudo=pseudo).first()
+
+    db.session.delete(user)
+    db.session.commit()
+
+    return jsonify({"message": f"Utilisateur '{pseudo}' supprimé"}), 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5001")))
 
