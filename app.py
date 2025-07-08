@@ -127,6 +127,25 @@ def login():
     return jsonify({"token" : token}), 200
 
 
+
+@app.route("/seen/<pseudo>", methods=["GET"])
+def seen(pseudo):
+    utilisateur = Utilisateur.query.get(pseudo)
+
+    if not utilisateur:
+        return (
+            jsonify(error="Utilisateur inconnu"),
+            404
+        )
+
+    return jsonify(
+        {
+            "pseudo": utilisateur.pseudo,
+            "derAct": utilisateur.derAct,
+        }
+    )
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5001")))
 
