@@ -194,6 +194,41 @@ def change_password(pseudo):
     return jsonify({"message": "Mot de passe mis à jour avec succès"}) , 200
 
 
+@app.route("/user/status", methods=["POST"])
+def change_status():
+    """"
+    Value possible : "actif", "inactif", "banni"
+    """
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"error": "Token manquant"}), 401
+
+    token = auth_header.split(" ")[1]
+    data = decode_jwt(token)
+    json = request.get_json()
+    utilisateur = Utilisateur.query.get(data["pseudo"])
+    try:
+        utilisateur.statut = json["statut"]
+        db.session.commit()
+    except ValueError:
+        return jsonify({"error": "Statut invalide (Valeur possible : \"actif\", \"inactif\", \"banni\")"}), 400
+
+    return jsonify({"result": "OK"}), 200
+
+  
+@app.route("/user/avatar/<pseudo>", methods=["GET"])
+def get_avatar(pseudo):
+    utilisateur = Utilisateur.query.get(pseudo)
+
+    if not utilisateur:
+        return (
+            jsonify(error="Utilisateur inconnu"),
+            404
+        )
+
+    return jsonify({"avatar": utilisateur.avatar}), 200
+
+  
 @app.route("/user/<pseudo>", methods=["DELETE"])
 def supprimer_utilisateur(pseudo):
 
