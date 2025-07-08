@@ -1,6 +1,7 @@
 import time
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import validates
 
 db = SQLAlchemy()
 
@@ -52,3 +53,9 @@ class Utilisateur(db.Model):
         lazy="joined",
         backref=db.backref("utilisateurs", lazy="selectin"),
     )
+
+    @validates("statut")
+    def _valide_statut(self, key, value):
+        if value not in {"actif", "inactif", "banni"}:
+            raise ValueError("Statut invalide")
+        return value
