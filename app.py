@@ -1,5 +1,5 @@
 from config import *
-from utils.jwt_utils import generate_jwt
+from utils.jwt_utils import generate_jwt, decode_jwt
 
 EXEMPT_ROUTES = ['/login', '/register', '/']
 
@@ -162,6 +162,36 @@ def seen(pseudo):
         }
     )
 
+@app.route("/user/<pseudo>/password", methods=["PATCH"])
+def change_password(pseudo):
+
+    auth_header = request.headers.get('Authorization')
+    token = auth_header.split(" ")[1]
+    data = decode_jwt(token)
+
+    if pseudo != data["pseudo"]:
+        return jsonify(error="l'utilisateur connecté n'est pas le même que celui en argument"), 400
+
+    data = request.get_json()
+    old_password = data.get("old_password")
+    new_password = data.get("new_password")
+
+    if not pseudo or not old_password or not new_password:
+        return jsonify({"error" : "pseudo, old_password ou new_password manquant"}), 400
+
+    user = Utilisateur.query.filter_by(pseudo=pseudo).first()
+    
+    if not user:
+        return jsonify({"error" : "utilisateur inconnu"}), 404
+    
+    if not check_password_hash(user.password, old_password):
+        return jsonify({"error": "ancien mot de passe incorrect"}), 401
+
+    user.password = generate_password_hash(new_password)
+
+    db.session.commit()
+
+    return jsonify({"message": "Mot de passe mis à jour avec succès"}) , 200
 
 
 @app.route("/user/status", methods=["POST"])

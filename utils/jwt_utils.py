@@ -5,7 +5,7 @@ from config import *
 
 SECRET_KEY = os.environ.get("JWT_SECRET")
 
-EXPIRATION_SECONDS = 600 #token valide 10 minutes
+EXPIRATION_SECONDS = 7200 #token valide 2 heures
 
 def generate_jwt(pseudo, roles):
     expiration = int(time.time()) + EXPIRATION_SECONDS
@@ -26,7 +26,6 @@ def decode_jwt(token):
         # mise a jour derniere activite
         user = Utilisateur.query.filter_by(pseudo=data["pseudo"]).first()
         user.derAct = int(time.time())
-        db.session.add(user)
         db.session.commit()
 
         return data  # dict contenant pseudo, roles, exp
