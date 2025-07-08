@@ -54,3 +54,13 @@ Création de la branche Documentation, rédaction de ce document et bien d'autre
 - Mise à jour de la doc de login pour retourner un jwt
 - Ajout de la documentation de whois
 - Ajout de la documentation de seen
+
+## 14h - 17h00
+
+- Développement de toutes les routes manquantes
+- Mise a jour de la documentation des routes
+- Tests des docstring pour confirmer la fonctionnalité
+
+## Intemporel 
+
+( J'ai pas suivi la création de la bdd, mais elle est la ! )
