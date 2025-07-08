@@ -36,7 +36,7 @@ Clé JWT : **on-ny-arrivera-jamais-enfin-peut-etre**
 
 ## GET
 
-**Route GET Seen**
+**GET /seen**
 
 ```yaml
     Récupère la dernière activité d'un utilisateur
@@ -73,7 +73,7 @@ Clé JWT : **on-ny-arrivera-jamais-enfin-peut-etre**
 ```
 
 
-**Route GET WhoIs**
+**GET /Whois**
 ```yaml
     Récupère les informations publiques d'un utilisateur
     ---
@@ -190,7 +190,7 @@ Récupérer les rôles d'un utilisateur.
               example: "Utilisateur non trouvé"
 ```
 
-GET **/user/avatar/<pseudo>**
+GET **/user/avatar/\<pseudo>**
 
 ```yaml
 Récupérer l'avatar d'un utilisateur.
@@ -225,8 +225,6 @@ Récupérer l'avatar d'un utilisateur.
 ```
 
 ## POST
-
-**Route POST Générique**
 
 POST **/login**
 ```yaml
@@ -355,7 +353,7 @@ POST **/register**
               example: "Utilisateur inconnu"
 ```
 
-POST **/user/roles/<pseudo>**
+POST **/user/roles/\<pseudo>**
 
 ```yaml
 Ajouter un rôle à un utilisateur (réservé aux administrateurs).
@@ -483,9 +481,65 @@ Modifier le statut de l'utilisateur authentifié.
             error: "Token manquant"
 ```
 
+POST **/make-admin/\<pseudo>**
+
+```yaml
+Attribuer le rôle d'administrateur à un utilisateur (réservé aux administrateurs).
+
+    ---
+    parameters:
+      - name: pseudo
+        in: path
+        type: string
+        required: true
+        description: Pseudo de l'utilisateur à promouvoir en admin
+      - name: Authorization
+        in: header
+        type: string
+        required: true
+        description: Jeton JWT d'authentification (format "Bearer <token>")
+    responses:
+      200:
+        description: Rôle admin ajouté avec succès et nouveau token généré
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+            token:
+              type: string
+          example:
+            message: "Rôle 'admin' ajouté à alice"
+            token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      400:
+        description: Action interdite ou rôle déjà présent chez l'utilisateur
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+            message:
+              type: string
+        examples:
+          erreur_admin:
+            error: "vous n'etes pas administrateur et ne pouvez pas executer cette action"
+          role_existant:
+            message: "alice a déjà le rôle 'admin'"
+      404:
+        description: Utilisateur non trouvé
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+          example:
+            error: "utilisateur a modifier inconnu"
+```
+
+
 ## PATCH
 
-PATCH **/user/<pseudo>/password**
+PATCH **/user/\<pseudo>/password**
 
 ```yaml
     Modifie le mot de passe d’un utilisateur
@@ -556,7 +610,7 @@ PATCH **/user/<pseudo>/password**
 
 ## Delete
 
-DELETE **/user/<pseudo>**
+DELETE **/user/\<pseudo>**
 
 ```yaml
 Supprime un utilisateur
