@@ -11,6 +11,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - traefik
 
   db:
     image: mysql:8.0
@@ -32,3 +34,7 @@ services:
 
 volumes:
   dbdata:
+
+networks:
+  traefik:
+    external: false

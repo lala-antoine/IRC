@@ -1,3 +1,5 @@
+import requests
+
 from config import *
 from utils.jwt_utils import generate_jwt, decode_jwt
 
@@ -72,6 +74,26 @@ def register():
     )
 
 
+CHANNEL_SERVICE_URL = os.getenv("CHANNEL_SERVICE_URL", "http://channel:5002")
+
+def fetch_user_channels(pseudo):
+    """
+    Appelle le channel-service pour connaître les canaux d’un utilisateur.
+    Renvoie [] si erreur ou aucune appartenance.
+    """
+    try:
+        r = requests.get(f"{CHANNEL_SERVICE_URL}/channel", timeout=3)
+        r.raise_for_status()
+        data = r.json()
+        out = []
+        for c in data.get("channels", []):
+            if pseudo in c["members"]:
+                out.append(c['name'])
+        return out
+    except requests.RequestException as exc:
+        app.logger.warning("channel-service indisponible : %s", exc)
+        return []
+
 @app.route("/whois/<pseudo>", methods=["GET"])
 def whois(pseudo):
     utilisateur = Utilisateur.query.get(pseudo)
@@ -81,11 +103,13 @@ def whois(pseudo):
             404
         )
 
+    canaux = fetch_user_channels(pseudo)
+
     return (
         jsonify(
             {
                 "pseudo": utilisateur.pseudo,
-                "cannaux": ["TODO"], # TODO voir pour les cannaux
+                "cannaux": canaux,
                 "statut": utilisateur.statut,
                 "derAct": utilisateur.derAct,
                 "roles": [r.nom for r in utilisateur.roles],
