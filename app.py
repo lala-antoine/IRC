@@ -215,6 +215,7 @@ def change_status():
 
     return jsonify({"result": "OK"}), 200
 
+  
 @app.route("/user/avatar/<pseudo>", methods=["GET"])
 def get_avatar(pseudo):
     utilisateur = Utilisateur.query.get(pseudo)
@@ -226,6 +227,67 @@ def get_avatar(pseudo):
         )
 
     return jsonify({"avatar": utilisateur.avatar}), 200
+
+  
+@app.route("/user/<pseudo>", methods=["DELETE"])
+def supprimer_utilisateur(pseudo):
+
+    auth_header = request.headers.get('Authorization')
+    token = auth_header.split(" ")[1]
+    data = decode_jwt(token)
+
+    if pseudo != data["pseudo"]:
+        return jsonify(error="l'utilisateur connecté n'est pas le même que celui en argument"), 400
+    
+    user = Utilisateur.query.filter_by(pseudo=pseudo).first()
+
+    db.session.delete(user)
+    db.session.commit()
+
+    return jsonify({"message": f"Utilisateur '{pseudo}' supprimé"}), 200
+
+
+SEUIL_2H = 7200
+
+def est_en_ligne(u: Utilisateur) -> bool:
+    """Retourne True si l'utilisateur a été actif il y a moins de 2 h."""
+    return time.time() - u.derAct <= SEUIL_2H
+
+
+@app.route("/ison", methods=["GET"])
+def ison():
+    raw = request.args.get("users")
+
+    if raw is None:
+        return jsonify(error="Paramètre 'users' requis"), 400
+
+    pseudos = [u.strip() for u in raw.split(",") if u.strip()]
+
+    utilisateurs = (
+        Utilisateur.query
+        .filter(Utilisateur.pseudo.in_(pseudos))
+        .all()
+    )
+
+    out = {}
+    for u in utilisateurs:
+        out[u.pseudo] = est_en_ligne(u)
+
+    return jsonify(out), 200
+
+@app.route("/user/roles/<pseudo>", methods=["GET"])
+def recuperer_roles(pseudo):
+
+    auth_header = request.headers.get('Authorization')
+    token = auth_header.split(" ")[1]
+    data = decode_jwt(token)
+
+    if pseudo != data["pseudo"]:
+        return jsonify(error="l'utilisateur connecté n'est pas le même que celui en argument"), 400
+    
+    user = Utilisateur.query.filter_by(pseudo=pseudo).first()
+
+    return jsonify({"roles" : [r.nom for r in user.roles]})
 
 
 if __name__ == "__main__":
