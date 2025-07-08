@@ -48,26 +48,55 @@ Clé JWT : **on-ny-arrivera-jamais-enfin-peut-etre**
         example: "Exemple"
     responses:
       200:
-        description: Descriptioin
+        description: Description
       400:
         description: Description
 ```
 
 **Route GET WhoIs**
 ```yaml
-    Renvoie des informations publiques sur un utilisateur
-    ---
-    parameters:
-      - name: user_info
-        in: query
-        type: string
-        required: true
-        example: "QuackSparrow"
-    responses:
-      200:
-        description: "Ok"
-      404:
-        description: "Utilisateur inconnu"
+    Récupère les informations pubiques d'un utilisateur
+---
+parameters:
+  - name: pseudo
+    in: path
+    type: string
+    required: true
+    description: pseudo
+    example : Quack Sparrow
+responses:
+  200:
+    description: "Utilisateur trouvé"
+    schema:
+      type: object
+      properties:
+        pseudo:
+          type: string
+          example: "Roger"
+        cannaux:
+          type: array
+          items:
+            type: string
+          example: ["TODO"]
+        statut:
+          type: string
+          example: "en ligne"
+        derAct:
+          type: int
+          example: "11215568894543"
+        roles:
+          type: array
+          items:
+            type: string
+          example: ["admin", "moderateur"]
+  404:
+    description: "Utilisateur inconnu"
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Utilisateur inconnu"
 ```
 
 
@@ -124,8 +153,20 @@ responses:
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   401:
     description: "Mot de passe incorrect"
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: {"error" : "Mot de passe incorrect"}
   404:
     description: "Utilisateur Inconnu"
+        schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: {"error" : "Utilisateur inconnu"}
 ```
 
 POST **/register**
@@ -182,8 +223,26 @@ POST **/register**
                 example: ["user","..."]
       400:
         description: "Champs obligatoires manquants"
+        schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: {"error" : "Champs obligatoires manquants"}
       409:
         description: "Pseudo ou email déjà utilisé"
+        schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: {"error" : "Pseudo ou email déjà utilisé"}
       404:
         description: "Utilisateur Inconnu"
+        schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: {"error" : "Utilisateur inconnu"}
 ```
