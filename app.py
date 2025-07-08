@@ -289,8 +289,8 @@ def modifier_roles(pseudo):
     token = auth_header.split(" ")[1]
     data = decode_jwt(token)
 
-    if not "admin" in data["roles"]:
-        return jsonify({"error" : "vous n'etes pas administrateur et ne pouvez pas executer cette action"}),400
+    #if not "admin" in data["roles"]:
+        #return jsonify({"error" : "vous n'etes pas administrateur et ne pouvez pas executer cette action"}),400
     
     body = request.get_json()
     new_role = body.get("new_role")
@@ -314,10 +314,36 @@ def modifier_roles(pseudo):
     if role not in user.roles:
         user.roles.append(role)
         db.session.commit()
-        return jsonify({"message": f"Rôle '{new_role}' ajouté à {pseudo}"}), 200
+        roles = [r.nom for r in user.roles]
+        return jsonify({"message": f"Rôle '{new_role}' ajouté à {pseudo}", "token" : generate_jwt(pseudo,roles)}), 200
     else:
         return jsonify({"message": f"{pseudo} a déjà le rôle '{new_role}'"}),400
 
+@app.route("/make-admin/<pseudo>", methods=["POST"])
+def make_admin(pseudo):
+
+    auth_header = request.headers.get('Authorization')
+    token = auth_header.split(" ")[1]
+    data = decode_jwt(token)
+
+    if not "admin" in data["roles"]:
+        return jsonify({"error" : "vous n'etes pas administrateur et ne pouvez pas executer cette action"}),400
+    
+    user = Utilisateur.query.filter_by(pseudo=pseudo).first()
+
+    if not user:
+        return jsonify({"error" : "utilisateur a modifier inconnu"}), 404
+
+    role = Role.query.filter_by(nom="admin").first()
+
+    # ajout du role si il n'est pas deja present chez l'utilisateur
+    if role not in user.roles:
+        user.roles.append(role)
+        db.session.commit()
+        roles = [r.nom for r in user.roles]
+        return jsonify({"message": f"Rôle 'admin' ajouté à {pseudo}", "token" : generate_jwt(pseudo,roles)}), 200
+    else:
+        return jsonify({"message": f"{pseudo} a déjà le rôle 'admin'"}),400
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5001")))
