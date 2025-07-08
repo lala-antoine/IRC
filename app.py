@@ -240,6 +240,21 @@ def ison():
 
     return jsonify(out), 200
 
+@app.route("/user/roles/<pseudo>", methods=["GET"])
+def recuperer_roles(pseudo):
+
+    auth_header = request.headers.get('Authorization')
+    token = auth_header.split(" ")[1]
+    data = decode_jwt(token)
+
+    if pseudo != data["pseudo"]:
+        return jsonify(error="l'utilisateur connecté n'est pas le même que celui en argument"), 400
+    
+    user = Utilisateur.query.filter_by(pseudo=pseudo).first()
+
+    return jsonify({"roles" : [r.nom for r in user.roles]})
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5001")))
 
