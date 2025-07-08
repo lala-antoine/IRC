@@ -587,4 +587,61 @@ def get_avatar(pseudo):
 
     return "rien"
 
+@app.route("/make-admin/<pseudo>", methods=["POST"])
+def make_admin(pseudo):
+    """
+    Attribuer le rôle d'administrateur à un utilisateur (réservé aux administrateurs).
+
+    ---
+    parameters:
+      - name: pseudo
+        in: path
+        type: string
+        required: true
+        description: Pseudo de l'utilisateur à promouvoir en admin
+      - name: Authorization
+        in: header
+        type: string
+        required: true
+        description: Jeton JWT d'authentification (format "Bearer <token>")
+    responses:
+      200:
+        description: Rôle admin ajouté avec succès et nouveau token généré
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+            token:
+              type: string
+          example:
+            message: "Rôle 'admin' ajouté à alice"
+            token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      400:
+        description: Action interdite ou rôle déjà présent chez l'utilisateur
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+            message:
+              type: string
+        examples:
+          erreur_admin:
+            error: "vous n'etes pas administrateur et ne pouvez pas executer cette action"
+          role_existant:
+            message: "alice a déjà le rôle 'admin'"
+      404:
+        description: Utilisateur non trouvé
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+          example:
+            error: "utilisateur a modifier inconnu"
+    """
+
+    return "rien"
+
 app.run()
