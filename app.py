@@ -242,17 +242,46 @@ def ison():
 
 @app.route("/user/roles/<pseudo>", methods=["GET"])
 def recuperer_roles(pseudo):
+    
+    user = Utilisateur.query.filter_by(pseudo=pseudo).first()
+
+    return jsonify({"roles" : [r.nom for r in user.roles]})
+
+@app.route("/user/roles/<pseudo>", methods=["POST"])
+def modifier_roles(pseudo):
 
     auth_header = request.headers.get('Authorization')
     token = auth_header.split(" ")[1]
     data = decode_jwt(token)
 
-    if pseudo != data["pseudo"]:
-        return jsonify(error="l'utilisateur connecté n'est pas le même que celui en argument"), 400
+    if not "admin" in data["roles"]:
+        return jsonify({"error" : "vous n'etes pas administrateur et ne pouvez pas executer cette action"}),400
     
+    body = request.get_json()
+    new_role = body.get("new_role")
+
+    if not new_role:
+        return jsonify({"error" : "argument new_role manquant"}), 401
+
     user = Utilisateur.query.filter_by(pseudo=pseudo).first()
 
-    return jsonify({"roles" : [r.nom for r in user.roles]})
+    if not user:
+        return jsonify({"error" : "utilisateur a modifier inconnu"}), 404
+
+    # Vérifie si le rôle existe déjà
+    role = Role.query.filter_by(nom=new_role).first()
+    if not role:
+        # On crée le rôle s’il n’existe pas
+        role = Role(nom=new_role)
+        db.session.add(role)
+
+    # ajout du role si il n'est pas deja present chez l'utilisateur
+    if role not in user.roles:
+        user.roles.append(role)
+        db.session.commit()
+        return jsonify({"message": f"Rôle '{new_role}' ajouté à {pseudo}"}), 200
+    else:
+        return jsonify({"message": f"{pseudo} a déjà le rôle '{new_role}'"}),400
 
 
 if __name__ == "__main__":
